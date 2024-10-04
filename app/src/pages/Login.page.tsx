@@ -20,11 +20,13 @@ const Login: React.FC = () => {
   const [nome, setNome] = useState("");
 
   const handleAuth = async () => {
-    if (isLogin) {
-      await loginFunc();
-    } else {
-      cadastrar(nome, usuario, senha);
-      loginFunc();
+    if (!usuario && !senha) {
+      if (isLogin) {
+        await loginFunc();
+      } else {
+        cadastrar(nome, usuario, senha);
+        loginFunc();
+      }
     }
   };
 
@@ -33,10 +35,14 @@ const Login: React.FC = () => {
     localStorage.setItem("token", result.token);
     useHistory().push("/");
   };
-  const alteraSenha = (e: any) => {
-    console.log(e);
-    setSenha(e.detail.value!);
+
+  const trocaTela = () => {
+    setIsLogin(!isLogin);
+    setUsuario("");
+    setNome("");
+    setSenha("");
   };
+
   return (
     <IonPage>
       <IonHeader>
@@ -65,16 +71,16 @@ const Login: React.FC = () => {
         </IonItem>
         <IonItem>
           <IonLabel position="floating">Senha</IonLabel>
-          <IonInput type="password" value={senha} onIonChange={alteraSenha} />
+          <IonInput
+            type="password"
+            value={senha}
+            onIonChange={(e) => setSenha(e.detail.value!)}
+          />
         </IonItem>
         <IonButton expand="full" onClick={handleAuth}>
           {isLogin ? "Entrar" : "Cadastrar"}
         </IonButton>
-        <IonButton
-          expand="full"
-          color="medium"
-          onClick={() => setIsLogin(!isLogin)}
-        >
+        <IonButton expand="full" color="medium" onClick={trocaTela}>
           {isLogin
             ? "Não tem uma conta? Cadastre-se"
             : "Já tem uma conta? Faça login"}
